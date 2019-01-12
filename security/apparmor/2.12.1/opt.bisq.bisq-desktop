@@ -2,17 +2,18 @@
 
 @{bisq_prefix} = /opt/bisq
 @{bisq_java_prefix} = /usr/lib/jvm/java-[0-9][0-9]-openjdk-*
+@{bisq_tor_prefix} = @{HOME}/.local/share/Bisq/btc_mainnet/tor
 
 profile bisq-desktop /opt/bisq/bisq-desktop {
     #include <abstractions/X>
     #include <abstractions/audio>
     #include <abstractions/base>
+    #include <abstractions/dbus-session-strict>
     #include <abstractions/dconf>
     #include <abstractions/dri-enumerate>
     #include <abstractions/fonts>
     #include <abstractions/gnome>
     #include <abstractions/kde>
-    #include <abstractions/mesa>
     #include <abstractions/nameservice>
 
     # Main executable
@@ -22,23 +23,26 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
 
     # Additioanl executables
 
-    /{,usr}/bin/basename ix,
-    /{,usr}/bin/dirname ix,
-    /{,usr}/bin/uname ix,
-    /{,usr}/bin/which rix,
+    /{,usr/}bin/basename ix,
+    /{,usr/}bin/dirname ix,
+    /{,usr/}bin/uname ix,
+    /{,usr/}bin/which rix,
     @{bisq_java_prefix}/bin/java ix,
-    owner @{HOME}/.local/share/Bisq/btc_mainnet/tor/tor Cx -> tor,
+    owner @{bisq_tor_prefix}/tor Cx -> tor,
 
     # ptrace
 
-    ptrace (read) peer=bisq-desktop//tor,
+    ptrace (read,trace) peer=bisq-desktop//tor,
+    ptrace (trace) peer=bisq-desktop,
 
     # System files
 
     /etc/java-[0-9][0-9]-openjdk/** r,
+    /etc/ssl/certs/java/cacerts r,
     /etc/timezone r,
     /sys/fs/cgroup/cpu,cpuacct/cpu.{cfs_quota_us,cfs_period_us,shares} r,
-    /sys/fs/cgroup/memory/user.slice/user-@{uid}.slice/session-[0-9]*{,[0-9]}.scope/memory.limit_in_bytes r,
+    /sys/fs/cgroup/memory/memory.limit_in_bytes r,
+    /sys/fs/cgroup/memory/user.slice/user-[0-9]*{,[0-9]}.slice/session-[0-9]*{,[0-9]}.scope/memory.limit_in_bytes r,
     @{PROC}/@{pids}/net/if_inet6 r,
     @{PROC}/@{pids}/net/ipv6_route r,
     @{PROC}/@{pids}/stat r,
@@ -48,12 +52,13 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
     # User files
  
     owner /tmp/hsperfdata_*/{,*} rw,
-    owner /tmp/xauth-@{uid}-_[0-9]*{,[0-9]} r, # TODO: move into X abstraction?
-    owner /{,var/}run/user/@{uid}/dconf/user rw,
+    owner /tmp/xauth-[0-9]*{,[0-9]}-_[0-9]*{,[0-9]} r, # TODO: move into X abstraction?
+    owner /{,var/}run/user/[0-9]*{,[0-9]}/dconf/user rw,
     owner @{HOME}/.local/share/Bisq/{,**} rwk,
     owner @{HOME}/.openjfx/ w,
     owner @{HOME}/.openjfx/cache/ w,
     owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/ rw,
+    owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libdecora_sse.so mrw,
     owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libglass.so mrw,
     owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libglassgtk3.so mrw,
     owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libjavafx_font.so mrw,
@@ -66,14 +71,51 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
     owner @{PROC}/@{pid}/fd/ r,
     owner @{PROC}/@{pid}/mountinfo r,
 
+    ###
+    # Backported mesa abstraction from 59865e54c55c8f375460ba22a725468ce3fb6957
+	# System files
+    /dev/dri/ r, # libGLX_mesa.so calls drmGetDevice2()
+
+    # User files
+    owner @{HOME}/.cache/ w, # if user clears all caches
+    owner @{HOME}/.cache/mesa_shader_cache/ w,
+    owner @{HOME}/.cache/mesa_shader_cache/index rw,
+    owner @{HOME}/.cache/mesa_shader_cache/??/ w,
+    owner @{HOME}/.cache/mesa_shader_cache/??/* rwk,
+    ### End of backport
+
     profile tor {
         #include <abstractions/base>
 
+        # Main executable
+
+        owner @{bisq_tor_prefix}/tor mr,
+
         # Networking
 
+        network netlink raw,
         network tcp,
+        network udp,
 
-        owner @{HOME}/.local/share/Bisq/btc_mainnet/tor/tor mr,
+        # System files
+
+        @{PROC}/sys/kernel/random/uuid r,
+
+        # User files
+
+        owner @{bisq_tor_prefix}/** r,
+        owner @{bisq_tor_prefix}/*{.tmp,.new} rw,
+        owner @{bisq_tor_prefix}/.tor/*{.tmp,.new} rw,
+        owner @{bisq_tor_prefix}/.tor/control_auth_cookie rw,
+        owner @{bisq_tor_prefix}/cached-certs rw,
+        owner @{bisq_tor_prefix}/cached-microdesc-consensus rw,
+        owner @{bisq_tor_prefix}/cached-microdescs rw,
+        owner @{bisq_tor_prefix}/lock rwk,
+        owner @{bisq_tor_prefix}/pid rw,
+        owner @{bisq_tor_prefix}/state rw,
+        owner @{bisq_tor_prefix}/state.tmp rw,
+        owner @{bisq_tor_prefix}/unverified-microdesc-consensus rw,
+        owner @{bisq_tor_prefix}/{,**/} rw, # create subdirs
     }    
 
 }
