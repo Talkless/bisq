@@ -1,0 +1,79 @@
+#include <tunables/global>
+
+@{bisq_prefix} = /opt/bisq
+@{bisq_java_prefix} = /usr/lib/jvm/java-[0-9][0-9]-openjdk-*
+
+profile bisq-desktop /opt/bisq/bisq-desktop {
+    #include <abstractions/X>
+    #include <abstractions/audio>
+    #include <abstractions/base>
+    #include <abstractions/dconf>
+    #include <abstractions/dri-enumerate>
+    #include <abstractions/fonts>
+    #include <abstractions/gnome>
+    #include <abstractions/kde>
+    #include <abstractions/mesa>
+    #include <abstractions/nameservice>
+
+    # Main executable
+
+    @{bisq_prefix}/bisq-desktop r, # launcher script
+    /{,usr/}bin/{,ba,da}sh ix, # for launcher script
+
+    # Additioanl executables
+
+    /{,usr}/bin/basename ix,
+    /{,usr}/bin/dirname ix,
+    /{,usr}/bin/uname ix,
+    /{,usr}/bin/which rix,
+    @{bisq_java_prefix}/bin/java ix,
+    owner @{HOME}/.local/share/Bisq/btc_mainnet/tor/tor Cx -> tor,
+
+    # ptrace
+
+    ptrace (read) peer=bisq-desktop//tor,
+
+    # System files
+
+    /etc/java-[0-9][0-9]-openjdk/** r,
+    /etc/timezone r,
+    /sys/fs/cgroup/cpu,cpuacct/cpu.{cfs_quota_us,cfs_period_us,shares} r,
+    /sys/fs/cgroup/memory/user.slice/user-@{uid}.slice/session-[0-9]*{,[0-9]}.scope/memory.limit_in_bytes r,
+    @{PROC}/@{pids}/net/if_inet6 r,
+    @{PROC}/@{pids}/net/ipv6_route r,
+    @{PROC}/@{pids}/stat r,
+    @{bisq_java_prefix}/lib/server/*.jsa mr,
+    @{bisq_prefix}/lib/*.jar r,
+
+    # User files
+ 
+    owner /tmp/hsperfdata_*/{,*} rw,
+    owner /tmp/xauth-@{uid}-_[0-9]*{,[0-9]} r, # TODO: move into X abstraction?
+    owner /{,var/}run/user/@{uid}/dconf/user rw,
+    owner @{HOME}/.local/share/Bisq/{,**} rwk,
+    owner @{HOME}/.openjfx/ w,
+    owner @{HOME}/.openjfx/cache/ w,
+    owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/ rw,
+    owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libglass.so mrw,
+    owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libglassgtk3.so mrw,
+    owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libjavafx_font.so mrw,
+    owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libjavafx_font_freetype.so mrw,
+    owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libjavafx_font_pango.so mrw,
+    owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libprism_es2.so mrw,
+    owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libprism_sw.so mrw,
+    owner @{PROC}/@{pid}/cgroup r,
+    owner @{PROC}/@{pid}/cmdline r,
+    owner @{PROC}/@{pid}/fd/ r,
+    owner @{PROC}/@{pid}/mountinfo r,
+
+    profile tor {
+        #include <abstractions/base>
+
+        # Networking
+
+        network tcp,
+
+        owner @{HOME}/.local/share/Bisq/btc_mainnet/tor/tor mr,
+    }    
+
+}
