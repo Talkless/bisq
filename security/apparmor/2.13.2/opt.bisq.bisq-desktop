@@ -67,6 +67,8 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
     owner /tmp/hsperfdata_*/{,*} rw,
     owner /tmp/xauth-@{uid}-_[0-9]*{,[0-9]} r, # TODO: move into X abstraction?
     owner /{,var/}run/user/@{uid}/dconf/user rw,
+    owner @{HOME}/.java/fonts/[0-9]*.[0-9]*.[0-9]*/ w,
+    owner @{HOME}/.java/fonts/[0-9]*.[0-9]*.[0-9]*/fcinfo*.{properties,tmp} rw,
     owner @{HOME}/.local/share/Bisq/{,**} rwk,
     owner @{HOME}/.openjfx/ w,
     owner @{HOME}/.openjfx/cache/ w,
