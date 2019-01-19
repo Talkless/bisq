@@ -43,6 +43,10 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
     ptrace (read,trace) peer=bisq-desktop//tor,
     ptrace (trace) peer=bisq-desktop,
 
+    # Signals
+
+    signal send set=(term) peer=bisq-desktop//tor,
+
     # System files
 
     /etc/java-[0-9][0-9]-openjdk/** r,
@@ -108,6 +112,10 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
         # System files
 
         @{PROC}/sys/kernel/random/uuid r,
+
+        # Signals
+
+        signal receive set=(term) peer=bisq-desktop,
 
         # User files
 
