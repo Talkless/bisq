@@ -16,6 +16,7 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
     #include <abstractions/kde>
     #include <abstractions/mesa>
     #include <abstractions/nameservice>
+    #include <abstractions/ubuntu-helpers>
 
     # Main executable
 
@@ -30,6 +31,13 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
     /{,usr/}bin/which rix,
     @{bisq_java_prefix}/bin/java ix,
     owner @{bisq_tor_prefix}/tor Cx -> tor,
+    #TODO: use xdg-open (and similar) abstractions when they are available
+    /usr/bin/kde-open Cx -> sanitized_helper,
+    /usr/bin/xdg-open Cx -> sanitized_helper,
+
+    # deny ptrace
+
+    deny ptrace (read) peer=bisq-desktop//sanitized_helper, # silence noise
 
     # ptrace
 
