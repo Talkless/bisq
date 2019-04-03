@@ -137,13 +137,13 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
         network tcp,
         network udp,
 
-        # System files
-
-        @{PROC}/sys/kernel/random/uuid r,
-
         # Signals
 
         signal receive set=(term) peer=bisq-desktop,
+
+        # System files
+
+        @{PROC}/sys/kernel/random/uuid r,
 
         # User files
 
