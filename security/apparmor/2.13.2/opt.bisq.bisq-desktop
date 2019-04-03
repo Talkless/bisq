@@ -27,6 +27,7 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
 
     /{,usr/}bin/basename ix,
     /{,usr/}bin/dirname ix,
+    /{,usr/}bin/ps Cx -> ps,
     /{,usr/}bin/uname ix,
     /{,usr/}bin/which rix,
     @{bisq_java_prefix}/bin/java ix,
@@ -41,6 +42,7 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
 
     # ptrace
 
+    ptrace (read) peer=bisq-desktop//ps,
     ptrace (read,trace) peer=bisq-desktop//tor,
     ptrace (trace) peer=bisq-desktop,
 
@@ -85,6 +87,30 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
     owner @{PROC}/@{pid}/cmdline r,
     owner @{PROC}/@{pid}/fd/ r,
     owner @{PROC}/@{pid}/mountinfo r,
+
+    profile ps {
+        #include <abstractions/base>
+
+        # ptrace
+
+        ptrace (read),
+
+        # Main executable
+
+        /{,usr/}bin/ps mr,
+
+        # System files
+
+        /dev/tty r,
+        /etc/nsswitch.conf r,
+        /etc/passwd r,
+        @{PROC}/ r,
+        @{PROC}/@{pids}/{cmdline,stat} r,
+        @{PROC}/sys/kernel/{osrelease,pid_max} r,
+        @{PROC}/tty/drivers r,
+        @{PROC}/uptime r,
+
+    }
 
     profile tor {
         #include <abstractions/base>
