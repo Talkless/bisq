@@ -28,6 +28,7 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
     /{,usr/}bin/basename ix,
     /{,usr/}bin/dirname ix,
     /{,usr/}bin/ps Cx -> ps,
+    /{,usr/}bin/sed Cx -> sed,
     /{,usr/}bin/uname ix,
     /{,usr/}bin/which rix,
     @{bisq_java_prefix}/bin/java ix,
@@ -109,6 +110,15 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
         @{PROC}/sys/kernel/{osrelease,pid_max} r,
         @{PROC}/tty/drivers r,
         @{PROC}/uptime r,
+
+    }
+
+    profile sed {
+        #include <abstractions/base>
+
+        # Main executable
+
+        /{,usr/}bin/sed mr,
 
     }
 
