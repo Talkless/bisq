@@ -9,6 +9,7 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     #include <abstractions/X>
     #include <abstractions/audio>
     #include <abstractions/base>
+    #include <abstractions/dbus-accessibility>
     #include <abstractions/dbus-session-strict>
     #include <abstractions/dconf>
     #include <abstractions/dri-enumerate>
