@@ -59,6 +59,7 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
 
     # Denied files
 
+    deny @{HOME}/.oracle_jre_usage/ w, # written by Java of binary installation
     deny @{HOME}/.oracle_jre_usage/*.timestamp w, # written by Java of binary installation
 
     # System files
