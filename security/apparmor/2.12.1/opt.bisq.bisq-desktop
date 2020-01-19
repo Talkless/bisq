@@ -1,10 +1,10 @@
 #include <tunables/global>
 
-@{bisq_prefix} = /opt/bisq
+@{bisq_prefix} = /opt/[Bb]isq
 @{bisq_java_prefix} = /usr/lib/jvm/java-[0-9][0-9]-openjdk-*
 @{bisq_tor_prefix} = @{HOME}/.local/share/Bisq/btc_mainnet/tor
 
-profile bisq-desktop /opt/bisq/bisq-desktop {
+profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     #include <abstractions/X>
     #include <abstractions/audio>
     #include <abstractions/base>
@@ -19,7 +19,8 @@ profile bisq-desktop /opt/bisq/bisq-desktop {
 
     # Main executable
 
-    @{bisq_prefix}/bisq-desktop r, # launcher script
+    @{bisq_prefix}/bisq-desktop r, # launcher script (built from source)
+    @{bisq_prefix}/Bisq rix, # launcher (distributed binary)
     /{,usr/}bin/{,ba,da}sh ix, # for launcher script
 
     # Additioanl executables
