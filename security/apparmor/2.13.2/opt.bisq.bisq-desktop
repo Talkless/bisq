@@ -57,15 +57,21 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     # System files
 
     /etc/java-[0-9][0-9]-openjdk/** r,
+    /etc/lsb-release r, # for crash handler
     /etc/ssl/certs/java/cacerts r,
     /etc/timezone r,
     /sys/fs/cgroup/cpu,cpuacct/cpu.{cfs_quota_us,cfs_period_us,shares} r,
+    /sys/fs/cgroup/cpuset/{cpuset.cpus,cpuset.mems} r, # for crash handler
     /sys/fs/cgroup/memory/memory.limit_in_bytes r,
     /sys/fs/cgroup/memory/user.slice/user-@{uid}.slice/session-[0-9]*{,[0-9]}.scope/memory.limit_in_bytes r,
+    /sys/fs/cgroup/memory/{memory.soft_limit_in_bytes,memory.usage_in_bytes,memory.max_usage_in_bytes} r, # for crash handler
     /usr/share/java/java-atk-wrapper.jar r,
     @{PROC}/@{pids}/net/if_inet6 r,
     @{PROC}/@{pids}/net/ipv6_route r,
     @{PROC}/@{pids}/stat r,
+    @{PROC}/loadavg r, # for crash handler
+    @{PROC}/sys/kernel/{core_pattern,pid_max,threads-max} r, # for crash handler
+    @{PROC}/sys/vm/max_map_count r, # for crash handler
     @{bisq_java_prefix}/lib/server/*.jsa mr,
     @{bisq_prefix}/lib/*.jar r,
 
@@ -89,6 +95,7 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/libprism_sw.so mrw,
     owner @{PROC}/@{pid}/cgroup r,
     owner @{PROC}/@{pid}/cmdline r,
+    owner @{PROC}/@{pid}/coredump_filter rw,
     owner @{PROC}/@{pid}/fd/ r,
     owner @{PROC}/@{pid}/mountinfo r,
     owner @{bisq_local_data_prefix}/{,**} rwk,
