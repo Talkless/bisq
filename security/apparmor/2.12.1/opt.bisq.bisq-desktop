@@ -59,6 +59,7 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     /sys/fs/cgroup/cpu,cpuacct/cpu.{cfs_quota_us,cfs_period_us,shares} r,
     /sys/fs/cgroup/memory/memory.limit_in_bytes r,
     /sys/fs/cgroup/memory/user.slice/user-[0-9]*{,[0-9]}.slice/session-[0-9]*{,[0-9]}.scope/memory.limit_in_bytes r,
+    /usr/share/java/java-atk-wrapper.jar r,
     @{PROC}/@{pids}/net/if_inet6 r,
     @{PROC}/@{pids}/net/ipv6_route r,
     @{PROC}/@{pids}/stat r,
