@@ -40,6 +40,10 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     /usr/bin/kde-open Cx -> sanitized_helper,
     /usr/bin/xdg-open Cx -> sanitized_helper,
 
+    # Additional libaries
+
+    @{bisq_prefix}/**.so mr, # binary installation
+
     # deny ptrace
 
     deny ptrace (read) peer=bisq-desktop//sanitized_helper, # silence noise
@@ -53,6 +57,10 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     # Signals
 
     signal send set=(term) peer=bisq-desktop//tor,
+
+    # Denied files
+
+    deny @{HOME}/.oracle_jre_usage/*.timestamp w, # written by Java of binary installation
 
     # System files
 
@@ -73,7 +81,7 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     @{PROC}/sys/kernel/{core_pattern,pid_max,threads-max} r, # for crash handler
     @{PROC}/sys/vm/max_map_count r, # for crash handler
     @{bisq_java_prefix}/lib/server/*.jsa mr,
-    @{bisq_prefix}/lib/*.jar r,
+    @{bisq_prefix}/** r,
 
     # User files
  
