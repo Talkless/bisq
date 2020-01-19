@@ -92,6 +92,12 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     owner @{PROC}/@{pid}/mountinfo r,
     owner @{bisq_local_data_prefix}/{,**} rwk,
 
+    ###
+    # Backported dri-common abstraction from a5e74c3be31fd5ed179c621308847aedd93fcf63
+    # TODO: remove in >=2.13.3 profile
+    /usr/share/drirc.d/{,*.conf}    r,
+    ### End of backport
+
     profile ps {
         #include <abstractions/base>
 
