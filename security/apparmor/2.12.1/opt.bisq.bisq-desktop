@@ -81,6 +81,7 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     @{PROC}/sys/vm/max_map_count r, # for crash handler
     @{bisq_java_prefix}/lib/server/*.jsa mr,
     @{bisq_prefix}/** r,
+    @{bisq_prefix}/app/hs_err_pid[0-9]*.log rw, # for crash handler (binary installation)
 
     # User files
  
