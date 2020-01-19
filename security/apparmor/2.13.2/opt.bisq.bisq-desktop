@@ -72,6 +72,7 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     /sys/fs/cgroup/cpuset/{cpuset.cpus,cpuset.mems} r, # for crash handler
     /sys/fs/cgroup/memory/memory.limit_in_bytes r,
     /sys/fs/cgroup/memory/user.slice/user-@{uid}.slice/session-[0-9]*{,[0-9]}.scope/memory.limit_in_bytes r,
+    /sys/fs/cgroup/memory/user.slice/user-@{uid}.slice/user\@@{uid}.service/memory.{limit_in_bytes,max_usage_in_bytes,soft_limit_in_bytes,usage_in_bytes} r,
     /sys/fs/cgroup/memory/{memory.soft_limit_in_bytes,memory.usage_in_bytes,memory.max_usage_in_bytes} r, # for crash handler
     /usr/share/java/java-atk-wrapper.jar r,
     @{PROC}/@{pids}/net/if_inet6 r,
