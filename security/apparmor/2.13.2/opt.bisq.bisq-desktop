@@ -2,7 +2,8 @@
 
 @{bisq_prefix} = /opt/[Bb]isq
 @{bisq_java_prefix} = /usr/lib/jvm/java-[0-9][0-9]-openjdk-*
-@{bisq_tor_prefix} = @{HOME}/.local/share/Bisq/btc_mainnet/tor
+@{bisq_local_data_prefix} = @{HOME}/.local/share/[Bbisq]*
+@{bisq_tor_prefix} = @{bisq_local_data_prefix}/btc_mainnet/tor
 
 profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     #include <abstractions/X>
@@ -74,7 +75,6 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     owner /{,var/}run/user/@{uid}/dconf/user rw,
     owner @{HOME}/.java/fonts/[0-9]*.[0-9]*.[0-9]*/ w,
     owner @{HOME}/.java/fonts/[0-9]*.[0-9]*.[0-9]*/fcinfo*.{properties,tmp} rw,
-    owner @{HOME}/.local/share/Bisq/{,**} rwk,
     owner @{HOME}/.openjfx/ w,
     owner @{HOME}/.openjfx/cache/ w,
     owner @{HOME}/.openjfx/cache/[0-9]*{,[0-9]}/ rw,
@@ -90,6 +90,7 @@ profile bisq-desktop /opt/{[Bb]isq/bisq-desktop,Bisq/Bisq} {
     owner @{PROC}/@{pid}/cmdline r,
     owner @{PROC}/@{pid}/fd/ r,
     owner @{PROC}/@{pid}/mountinfo r,
+    owner @{bisq_local_data_prefix}/{,**} rwk,
 
     profile ps {
         #include <abstractions/base>
